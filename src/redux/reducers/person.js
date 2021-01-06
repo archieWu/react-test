@@ -7,12 +7,9 @@ export default function personReducer (preState = initState, action){
 
     switch (type) {
         case ADD_PERSON:
-            console.log(data)
             return [data,...preState]
         default:
             return preState
 
     }
-
-
 }

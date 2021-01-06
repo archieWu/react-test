@@ -1,5 +1,5 @@
-import { connect } from "react-redux"
-import React, { Component } from "react";
+import { useDispatch, useSelector } from "react-redux"
+import React, { useState } from "react";
 import {
     increment,
     decrement,
@@ -7,58 +7,46 @@ import {
  } from "../../redux/actions/count"
 
 
-class CountUI extends Component {
- 
-     increment = () => {
-         const { value } = this.selectNumber
-         this.props.increment(value*1)
+const Count = () => {
+    
+    const count = useSelector(state => state.count);
+    const persons = useSelector(state => state.persons.length);
+    const [selectNumber, setSelectNumber] = useState(1);
+    const dispatch = useDispatch();
+    const add = () => {
+         dispatch(increment(selectNumber))
          
      }
-     decrement = () => {
-         const { value } = this.selectNumber
-         this.props.decrement(value*1)
-         
+    const subtract = () => {
+         dispatch(decrement(selectNumber))    
      }
-     incrementIfOdd = () => {
-         const { value } = this.selectNumber
-         const count = this.props.count
+    const incrementIfOdd = () => {
          if (count % 2 !== 0) {
-             this.props.increment(value*1)
+            dispatch(increment(selectNumber))
          }
  
      }
-     incrementAsync = () => {
-         const { value } = this.selectNumber
-         this.props.incrementAsyn(value*1,500)
+    const incrementAsync = () => {
+         dispatch(incrementAsyn(selectNumber,500))
      }
-     render() {
-         return (
-             <>
-                 <h1>當前求和為:{this.props.count},下方總人數為：{this.props.persons.length}</h1>
-                 <select ref={c => this.selectNumber = c}>
-                     <option value='1'>1</option>
-                     <option value='2'>2</option>
-                     <option value='3'>3</option>
-                 </select>&nbsp;
-                 <button onClick={this.increment}>+</button>&nbsp;
-                 <button onClick={this.decrement}>-</button>&nbsp;
-                 <button onClick={this.incrementIfOdd}>當前和為奇數+當前和為奇數+</button>&nbsp;
-                 <button onClick={this.incrementAsync}>異步+</button>
- 
- 
-             </>
-         )
-     }
+    
+    return (
+        <>
+            <h1>當前求和為:{count},下方總人數為：{persons}</h1>
+            <select onChange={c => setSelectNumber(c.target.value*1)}>
+                <option value='1'>1</option>
+                <option value='2'>2</option>
+                <option value='3'>3</option>
+            </select>&nbsp;
+            <button onClick={add}>+</button>&nbsp;
+            <button onClick={subtract}>-</button>&nbsp;
+            <button onClick={incrementIfOdd}>當前和為奇數+當前和為奇數+</button>&nbsp;
+            <button onClick={incrementAsync}>異步+</button>
+
+
+        </>
+    )
+     
  }
 
-export default connect(
-state => ({ 
-    count : state.count,
-    persons : state.persons
-}),
-{ 
-    increment,
-    decrement,
-    incrementAsyn
-})(CountUI)
-
+export default Count;

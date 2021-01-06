@@ -1,48 +1,40 @@
-import { connect } from "react-redux"
-import React, { Component } from "react";
+import React, { useRef } from "react";
+import { useDispatch, useSelector } from "react-redux"
 import { nanoid } from "nanoid"
 import {
     addPerson
 } from "../../redux/actions/person"
 
-
-
-class PersonUI extends Component {
-    //撰寫狀態控制
-    //例：
-    addPerson = () => {
-        const name = this.nameNode.value
-        const age = this.ageNode.value
+const Person = () => {
+    const nameNode = useRef();
+    const ageNode = useRef();
+    const count = useSelector(state => state.count)
+    const persons = useSelector(state => state.persons)
+    const dispatch = useDispatch();
+    const addPersons = () => {
+        const name = nameNode.current.value;
+        const age = ageNode.current.value;
         const personObj = { id : nanoid(), name, age }
-        this.props.addPerson(personObj)
-        this.nameNode.value = ""
-        this.ageNode.value = ""
+        dispatch(addPerson(personObj))
+        nameNode.current.value = '';
+        ageNode.current.value = '';
     }
+    return (
+        <>
+            <h2>當前人有,上方和為{ count }</h2>
+            <input ref ={ nameNode } type = "test" placeholder = "輸入名字"/>
+            <input ref = { ageNode } type = "test" placeholder = "輸入年齡"/>
+            <button onClick = {addPersons}>添加</button>
+            <ul>
+                {
+                    persons.map((p)=>{
+                        return <li key = {p.id}>{p.name}--{p.age}歲</li>
+                    })
+                }
+            </ul>
+        </>
+    )
 
-    render() {
-        return (
-            <>
-                <h2>當前人有,上方和為{ this.props.count }</h2>
-                <input ref ={ c => this.nameNode = c } type = "test" placeholder = "輸入名字"/>
-                <input ref = { c => this.ageNode = c } type = "test" placeholder = "輸入年齡"/>
-                <button onClick = {this.addPerson}>添加</button>
-                <ul>
-                    {
-                        this.props.persons.map((p)=>{
-                            return <li key = {p.id}>{p.name}--{p.age}歲</li>
-                        })
-                    }
-                </ul>
-            </>
-        )
-    }
 }
 
-export default connect(
-state => ({
-    persons : state.persons,
-    count : state.count
-}),
-    {
-        addPerson
-})(PersonUI)
+export default Person;
